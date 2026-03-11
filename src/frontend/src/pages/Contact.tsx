@@ -19,8 +19,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "contact@aegiscybersecurity.in",
-    href: "mailto:contact@aegiscybersecurity.in",
+    value: "sushantbhardwaj2121@gmail.com",
+    href: "mailto:sushantbhardwaj2121@gmail.com",
   },
   {
     icon: MapPin,
@@ -76,7 +76,7 @@ export default function Contact() {
             to you within 24 hours.
           </p>
           <div className="font-mono text-xs text-muted-foreground bg-secondary/30 rounded-sm px-4 py-2">
-            contact@aegiscybersecurity.in
+            sushantbhardwaj2121@gmail.com
           </div>
         </motion.div>
       </div>
@@ -285,7 +285,7 @@ export default function Contact() {
                     <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
                     <p className="text-sm text-destructive font-sans">
                       Failed to send message. Please try again or email us
-                      directly at contact@aegiscybersecurity.in
+                      directly at sushantbhardwaj2121@gmail.com
                     </p>
                   </div>
                 )}

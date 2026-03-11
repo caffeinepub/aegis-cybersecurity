@@ -118,7 +118,7 @@ export default function Services() {
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
               # SERVICES
             </span>
-            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6">
+            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6 cyber-text">
               Security Services
             </h1>
             <p className="text-lg text-muted-foreground font-sans max-w-2xl mx-auto">
@@ -138,8 +138,9 @@ export default function Services() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="relative glass-card rounded-sm p-8 overflow-hidden group hover:neon-border transition-all duration-300"
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 80 }}
+              whileHover={{ scale: 1.01, x: 4 }}
+              className="relative glass-card rounded-sm p-8 overflow-hidden group hover:neon-border"
             >
               <div
                 className={`absolute inset-0 bg-gradient-to-r ${service.accent} opacity-50 group-hover:opacity-80 transition-opacity`}
@@ -147,14 +148,18 @@ export default function Services() {
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                    <motion.div
+                      whileHover={{ scale: 1.15, rotate: 8 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className="w-12 h-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0"
+                    >
                       <service.icon className="w-6 h-6 text-primary" />
-                    </div>
+                    </motion.div>
                     <div>
                       <div className="font-mono text-xs text-primary tracking-widest uppercase mb-0.5">
                         {service.tagline}
                       </div>
-                      <h3 className="font-mono text-xl font-bold text-foreground">
+                      <h3 className="font-mono text-xl font-bold text-foreground cyber-text">
                         {service.title}
                       </h3>
                     </div>
@@ -169,13 +174,15 @@ export default function Services() {
                   </h4>
                   <ul className="flex flex-col gap-2">
                     {service.features.map((f) => (
-                      <li
+                      <motion.li
                         key={f}
+                        whileHover={{ x: 4 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                         className="flex items-center gap-3 text-sm font-sans text-foreground"
                       >
                         <ChevronRight className="w-3 h-3 text-primary flex-shrink-0" />
                         {f}
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
@@ -197,7 +204,7 @@ export default function Services() {
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
               # PROCESS
             </span>
-            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground">
+            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground cyber-text">
               How It Works
             </h2>
           </motion.div>
@@ -208,15 +215,20 @@ export default function Services() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -4, scale: 1.02 }}
                 className="glass-card rounded-sm p-6 text-center relative"
               >
                 <div className="font-mono text-4xl font-bold text-primary/20 mb-3">
                   {step.step}
                 </div>
-                <div className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3"
+                >
                   <step.icon className="w-5 h-5 text-primary" />
-                </div>
+                </motion.div>
                 <h3 className="font-mono text-sm font-semibold text-foreground mb-2">
                   {step.title}
                 </h3>
@@ -237,7 +249,7 @@ export default function Services() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-mono font-bold text-foreground mb-4">
+            <h2 className="text-3xl font-mono font-bold text-foreground mb-4 cyber-text">
               Ready to Get Started?
             </h2>
             <p className="text-muted-foreground font-sans mb-8">

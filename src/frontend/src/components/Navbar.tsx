@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Menu, Shield, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 const navLinks = [
@@ -35,7 +36,7 @@ export default function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "glass-nav shadow-[0_2px_30px_oklch(0_0_0/0.4)]"
+          ? "glass-nav shadow-[0_2px_30px_oklch(0_0_0/0.5)]"
           : "bg-transparent",
       )}
     >
@@ -52,7 +53,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col leading-tight">
               <span className="font-mono text-lg font-bold text-foreground tracking-widest">
-                AEGIS
+                AEGIS-IND
               </span>
               <span className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase font-sans">
                 Cybersecurity
@@ -75,12 +76,24 @@ export default function Navbar() {
                 )}
               >
                 {link.label}
-                <span
-                  className={cn(
-                    "absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-primary transition-all duration-300",
-                    isActive(link.to) ? "w-4/5" : "w-0 group-hover:w-3/5",
-                  )}
+                <motion.span
+                  layoutId={
+                    isActive(link.to) ? "active-nav-indicator" : undefined
+                  }
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px"
+                  style={{
+                    background: "oklch(0.65 0.25 250)",
+                    boxShadow: "0 0 8px oklch(0.65 0.25 250 / 0.8)",
+                  }}
+                  animate={{
+                    width: isActive(link.to) ? "80%" : "0%",
+                    opacity: isActive(link.to) ? 1 : 0,
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
+                {!isActive(link.to) && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-primary/40 transition-all duration-300 w-0 group-hover:w-3/5" />
+                )}
               </Link>
             ))}
           </div>
@@ -103,45 +116,75 @@ export default function Navbar() {
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <AnimatePresence mode="wait" initial={false}>
+              {open ? (
+                <motion.span
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <X className="w-5 h-5" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Menu className="w-5 h-5" />
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
 
         {/* Mobile menu */}
-        {open && (
-          <div className="md:hidden glass-nav border-t border-border pb-4">
-            <div className="flex flex-col gap-1 pt-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  data-ocid={link.ocid}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "px-4 py-3 text-sm font-sans tracking-wide transition-colors",
-                    isActive(link.to)
-                      ? "text-primary"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="px-4 pt-2">
-                <Button
-                  data-ocid="nav.cta.button"
-                  onClick={() => {
-                    navigate({ to: "/contact" });
-                    setOpen(false);
-                  }}
-                  className="w-full bg-primary text-primary-foreground font-mono text-sm tracking-wider"
-                >
-                  Request Security Scan
-                </Button>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden glass-nav border-t border-border pb-4"
+            >
+              <div className="flex flex-col gap-1 pt-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    data-ocid={link.ocid}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "px-4 py-3 text-sm font-sans tracking-wide transition-colors",
+                      isActive(link.to)
+                        ? "text-primary"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="px-4 pt-2">
+                  <Button
+                    data-ocid="nav.cta.button"
+                    onClick={() => {
+                      navigate({ to: "/contact" });
+                      setOpen(false);
+                    }}
+                    className="w-full bg-primary text-primary-foreground font-mono text-sm tracking-wider"
+                  >
+                    Request Security Scan
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </header>
   );

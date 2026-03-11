@@ -27,25 +27,26 @@ const values = [
   },
 ];
 
-const timeline = [
+const milestones = [
   {
-    year: "2023",
-    event: "AEGIS founded with a mission to democratize startup security",
-  },
-  {
-    year: "2024",
+    year: "2026",
     event:
-      "Expanded services to include full vulnerability assessments and API security reviews",
-  },
-  {
-    year: "2025",
-    event:
-      "Reached 500+ startup assessments across SaaS, fintech, and B2B sectors",
+      "AEGIS-IND founded with a mission to democratize startup security in India",
   },
   {
     year: "2026",
     event:
-      "Launched automated scanning infrastructure to deliver faster, deeper assessments",
+      "Launched attack surface discovery and vulnerability assessment services for early-stage startups",
+  },
+  {
+    year: "Now",
+    event:
+      "Actively securing startups, SaaS products, and tech founders across India — one scan at a time",
+  },
+  {
+    year: "Next",
+    event:
+      "Expanding automated scanning infrastructure to deliver faster, deeper assessments at scale",
   },
 ];
 
@@ -67,8 +68,8 @@ export default function About() {
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
               # ABOUT
             </span>
-            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6">
-              About AEGIS
+            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6 cyber-text">
+              About AEGIS-IND
             </h1>
             <p className="text-lg text-muted-foreground font-sans max-w-2xl mx-auto leading-relaxed">
               We help startups secure their platforms before attackers exploit
@@ -87,11 +88,12 @@ export default function About() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              transition={{ type: "spring", stiffness: 80 }}
             >
               <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
                 # MISSION
               </span>
-              <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground mb-6">
+              <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground mb-6 cyber-text">
                 Security Shouldn&apos;t Be
                 <br />
                 an Afterthought
@@ -102,7 +104,7 @@ export default function About() {
                 then, the damage is done.
               </p>
               <p className="text-muted-foreground font-sans leading-relaxed">
-                AEGIS was founded to change that. We make professional-grade
+                AEGIS-IND was founded to change that. We make professional-grade
                 security assessments accessible to early-stage startups who are
                 building fast and don&apos;t have a dedicated security team.
               </p>
@@ -112,6 +114,7 @@ export default function About() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              transition={{ type: "spring", stiffness: 80 }}
               className="relative"
             >
               <div className="glass-card rounded-sm p-8 neon-border">
@@ -123,7 +126,7 @@ export default function About() {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-px bg-primary" />
                   <span className="font-mono text-xs text-muted-foreground tracking-widest uppercase">
-                    Sushant Bhardwaj, Founder
+                    AEGIS-IND Team
                   </span>
                 </div>
               </div>
@@ -132,7 +135,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Founder */}
+      {/* Team */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-card/10">
         <div className="max-w-5xl mx-auto">
           <motion.div
@@ -142,74 +145,85 @@ export default function About() {
             className="text-center mb-16"
           >
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # FOUNDER
+              # TEAM
             </span>
-            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground">
-              Meet the Founder
+            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground cyber-text">
+              Meet the Team
             </h2>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-          >
-            <div className="relative flex justify-center lg:justify-start">
-              <div className="relative w-64 h-64">
-                <div className="absolute inset-0 rounded-sm bg-primary/10 neon-border" />
-                <img
-                  src="/assets/generated/founder-sushant.dim_400x400.jpg"
-                  alt="Sushant Bhardwaj"
-                  className="relative z-10 w-full h-full object-cover rounded-sm grayscale hover:grayscale-0 transition-all duration-500"
-                />
-                {/* Corner decorations */}
-                <div className="absolute -top-2 -left-2 w-5 h-5 border-t-2 border-l-2 border-primary" />
-                <div className="absolute -top-2 -right-2 w-5 h-5 border-t-2 border-r-2 border-primary" />
-                <div className="absolute -bottom-2 -left-2 w-5 h-5 border-b-2 border-l-2 border-primary" />
-                <div className="absolute -bottom-2 -right-2 w-5 h-5 border-b-2 border-r-2 border-primary" />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-mono text-2xl font-bold text-foreground">
-                  Sushant Bhardwaj
-                </h3>
-              </div>
-              <Badge
-                variant="outline"
-                className="border-primary/30 text-primary font-mono text-xs tracking-wider mb-6"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {[
+              {
+                name: "Kaushiki Sharma",
+                role: "CEO",
+                roleLabel: "Chief Executive Officer",
+                initials: "KS",
+                description:
+                  "Visionary leader driving AEGIS-IND's strategy and growth. Kaushiki brings sharp business acumen and a passion for building security-first startup culture.",
+              },
+              {
+                name: "Sushant Bhardwaj",
+                role: "CSO",
+                roleLabel: "Chief Security Officer",
+                initials: "SB",
+                description:
+                  "Cybersecurity researcher specializing in attack surface discovery and vulnerability assessments. Leads all security operations and client engagements.",
+              },
+              {
+                name: "Akshar Anant",
+                role: "CFO",
+                roleLabel: "Chief Financial Officer",
+                initials: "AA",
+                description:
+                  "Financial strategist ensuring AEGIS-IND operates with transparency and fiscal discipline. Oversees pricing, budgeting, and sustainable growth.",
+              },
+              {
+                name: "Sahil Singh",
+                role: "COO",
+                roleLabel: "Chief Operating Officer",
+                initials: "SS",
+                description:
+                  "Operations expert responsible for delivery quality, turnaround times, and client experience. Ensures every engagement runs smoothly and on time.",
+              },
+            ].map((member, i) => (
+              <motion.div
+                key={member.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{ scale: 1.02, y: -4 }}
+                className="glass-card rounded-sm p-6 neon-border flex flex-col gap-4"
+                data-ocid={`about.team.item.${i + 1}`}
               >
-                Founder & Security Researcher
-              </Badge>
-              <p className="text-muted-foreground font-sans leading-relaxed mb-4">
-                Cybersecurity enthusiast building tools to help startups secure
-                their platforms before attackers exploit vulnerabilities.
-              </p>
-              <p className="text-muted-foreground font-sans leading-relaxed mb-6">
-                Specializing in attack surface discovery and vulnerability
-                assessments for early-stage companies. Passionate about making
-                professional security accessible to founders who are building
-                fast.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Attack Surface Discovery",
-                  "Vulnerability Assessment",
-                  "Penetration Testing",
-                  "API Security",
-                ].map((sk) => (
-                  <span
-                    key={sk}
-                    className="px-3 py-1 text-xs font-mono rounded-sm bg-primary/10 border border-primary/20 text-primary"
-                  >
-                    {sk}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-sm bg-primary/10 border border-primary/30 flex items-center justify-center flex-shrink-0">
+                    <span className="font-mono text-lg font-bold text-primary">
+                      {member.initials}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="font-mono text-lg font-bold text-foreground cyber-text">
+                      {member.name}
+                    </h3>
+                    <Badge
+                      variant="outline"
+                      className="border-primary/30 text-primary font-mono text-xs tracking-wider mt-1"
+                    >
+                      {member.role}
+                    </Badge>
+                  </div>
+                </div>
+                <p className="text-xs font-mono text-muted-foreground/60 tracking-widest uppercase">
+                  {member.roleLabel}
+                </p>
+                <p className="text-sm text-muted-foreground font-sans leading-relaxed">
+                  {member.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -226,8 +240,8 @@ export default function About() {
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
               # VALUES
             </span>
-            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground">
-              Why AEGIS
+            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground cyber-text">
+              Why AEGIS-IND
             </h2>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -237,12 +251,17 @@ export default function About() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{ scale: 1.02, x: 4 }}
                 className="glass-card rounded-sm p-6 flex gap-4"
               >
-                <div className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0"
+                >
                   <value.icon className="w-5 h-5 text-primary" />
-                </div>
+                </motion.div>
                 <div>
                   <h3 className="font-mono text-sm font-semibold text-foreground mb-1">
                     {value.title}
@@ -257,7 +276,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Journey / Milestones */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-card/10">
         <div className="max-w-3xl mx-auto">
           <motion.div
@@ -267,22 +286,26 @@ export default function About() {
             className="text-center mb-12"
           >
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # HISTORY
+              # ROADMAP
             </span>
-            <h2 className="text-3xl font-mono font-bold text-foreground">
+            <h2 className="text-3xl font-mono font-bold text-foreground cyber-text">
               Our Journey
             </h2>
           </motion.div>
           <div className="relative">
             <div className="absolute left-[76px] top-0 bottom-0 w-px bg-border/40" />
             <div className="flex flex-col gap-8">
-              {timeline.map((item, i) => (
+              {milestones.map((item, i) => (
                 <motion.div
-                  key={item.year}
+                  key={`${item.year}-${i}`}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
+                  transition={{
+                    delay: i * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
                   className="flex items-start gap-6"
                 >
                   <div className="font-mono text-sm font-bold text-primary w-16 text-right flex-shrink-0 mt-1">
@@ -307,7 +330,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-mono font-bold text-foreground mb-4">
+            <h2 className="text-3xl font-mono font-bold text-foreground mb-4 cyber-text">
               Work With Us
             </h2>
             <p className="text-muted-foreground font-sans mb-8">

@@ -11,7 +11,7 @@ const navLinks = [
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const hostname =
+  const _hostname =
     typeof window !== "undefined" ? window.location.hostname : "";
 
   return (
@@ -24,7 +24,7 @@ export default function Footer() {
               <Shield className="w-7 h-7 text-primary" strokeWidth={1.5} />
               <div>
                 <div className="font-mono text-base font-bold tracking-widest text-foreground">
-                  AEGIS
+                  AEGIS-IND
                 </div>
                 <div className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase">
                   Cybersecurity
@@ -32,14 +32,14 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Startup Security Assessment Services
+              Security-First. Startup-Focused.
             </p>
             <a
-              href="mailto:contact@aegiscybersecurity.in"
+              href="mailto:sushantbhardwaj2121@gmail.com"
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               <Mail className="w-4 h-4" />
-              contact@aegiscybersecurity.in
+              sushantbhardwaj2121@gmail.com
             </a>
           </div>
 
@@ -89,16 +89,8 @@ export default function Footer() {
 
         <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground font-mono">
-            © {year} AEGIS Cybersecurity. All rights reserved.
+            © {year} AEGIS-IND. All rights reserved.
           </p>
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(hostname)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-muted-foreground hover:text-primary transition-colors"
-          >
-            Built with ♥ using caffeine.ai
-          </a>
         </div>
       </div>
     </footer>

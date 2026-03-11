@@ -105,7 +105,7 @@ export default function Pricing() {
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
               # PRICING
             </span>
-            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6">
+            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6 cyber-text">
               Simple Pricing
             </h1>
             <p className="text-lg text-muted-foreground font-sans">
@@ -125,11 +125,15 @@ export default function Pricing() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{
+                  scale: plan.popular ? 1.04 : 1.02,
+                  y: -4,
+                }}
                 className={`relative glass-card rounded-sm p-8 flex flex-col ${
                   plan.popular
                     ? "neon-border shadow-neon-lg"
-                    : "border border-border/40 hover:border-primary/20 transition-colors"
+                    : "border border-border/40 hover:border-primary/20"
                 }`}
               >
                 {plan.popular && (
@@ -141,7 +145,9 @@ export default function Pricing() {
                 )}
 
                 <div className="flex items-center gap-3 mb-6">
-                  <div
+                  <motion.div
+                    whileHover={{ scale: 1.15, rotate: 8 }}
+                    transition={{ type: "spring", stiffness: 300 }}
                     className={`w-10 h-10 rounded-sm flex items-center justify-center ${
                       plan.popular
                         ? "bg-primary/20 border border-primary/40"
@@ -153,7 +159,7 @@ export default function Pricing() {
                         plan.popular ? "text-primary" : "text-muted-foreground"
                       }`}
                     />
-                  </div>
+                  </motion.div>
                   <div>
                     <div className="font-mono text-xs text-muted-foreground tracking-widest uppercase">
                       {plan.tagline}
@@ -228,7 +234,7 @@ export default function Pricing() {
             <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
               # FAQ
             </span>
-            <h2 className="text-3xl font-mono font-bold text-foreground">
+            <h2 className="text-3xl font-mono font-bold text-foreground cyber-text">
               Common Questions
             </h2>
           </motion.div>
@@ -239,6 +245,8 @@ export default function Pricing() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                whileHover={{ x: 4 }}
+                transition={{ type: "spring", stiffness: 200 }}
                 className="glass-card rounded-sm p-6"
               >
                 <h4 className="font-mono text-sm font-semibold text-foreground mb-2">
@@ -261,7 +269,7 @@ export default function Pricing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-mono font-bold text-foreground mb-4">
+            <h2 className="text-3xl font-mono font-bold text-foreground mb-4 cyber-text">
               Not sure which plan?
             </h2>
             <p className="text-muted-foreground font-sans mb-8">
