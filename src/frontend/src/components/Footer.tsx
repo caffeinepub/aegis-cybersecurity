@@ -1,95 +1,60 @@
-import { Link } from "@tanstack/react-router";
-import { Mail, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
+import { Link } from "../App";
 
-const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/services", label: "Services" },
-  { to: "/pricing", label: "Pricing" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
-] as const;
+const footerLinks = [
+  { label: "Home", to: "/" },
+  { label: "Services", to: "/services" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-  const _hostname =
-    typeof window !== "undefined" ? window.location.hostname : "";
-
   return (
-    <footer className="border-t border-border/50 bg-card/30 mt-auto">
+    <footer className="relative z-10 border-t border-border/40 bg-background/60 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {/* Brand */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2.5">
-              <Shield className="w-7 h-7 text-primary" strokeWidth={1.5} />
-              <div>
-                <div className="font-mono text-base font-bold tracking-widest text-foreground">
-                  AEGIS-IND
-                </div>
-                <div className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase">
-                  Cybersecurity
-                </div>
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-md bg-primary/15 border border-primary/30 flex items-center justify-center">
+                <Shield className="w-3.5 h-3.5 text-primary" />
               </div>
+              <span className="font-mono font-bold text-base">
+                <span className="text-foreground">AEGIS</span>
+                <span className="text-primary">-IND</span>
+              </span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Security-First. Startup-Focused.
+            <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
+              Attack surface discovery and vulnerability assessments for modern
+              startups.
             </p>
             <a
               href="mailto:sushantbhardwaj2121@gmail.com"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-xs text-primary/70 hover:text-primary transition-colors font-mono"
+              data-ocid="footer.email.link"
             >
-              <Mail className="w-4 h-4" />
               sushantbhardwaj2121@gmail.com
             </a>
           </div>
-
-          {/* Links */}
-          <div>
-            <h4 className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4">
-              Navigation
-            </h4>
-            <ul className="flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4">
-              Services
-            </h4>
-            <ul className="flex flex-col gap-2">
-              {[
-                "Attack Surface Discovery",
-                "Subdomain Enumeration",
-                "Vulnerability Scanning",
-                "Security Risk Reporting",
-              ].map((s) => (
-                <li key={s}>
-                  <Link
-                    to="/services"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {s}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <nav className="flex flex-wrap gap-x-6 gap-y-2">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                data-ocid={`footer.${link.label.toLowerCase()}.link`}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-
-        <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground font-mono">
-            © {year} AEGIS-IND. All rights reserved.
+        <div className="mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground/60 font-mono">
+            &copy; 2026 AEGIS-IND. All rights reserved.
+          </p>
+          <p className="text-xs text-muted-foreground/40 font-mono">
+            Securing the future, one startup at a time.
           </p>
         </div>
       </div>

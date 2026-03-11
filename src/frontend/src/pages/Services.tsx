@@ -1,277 +1,157 @@
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "@tanstack/react-router";
 import {
-  Activity,
-  AlertTriangle,
-  ChevronRight,
-  FileText,
+  ArrowRight,
+  Bug,
   Globe,
-  Layers,
-  Lock,
   Search,
-  Server,
   Shield,
+  ShieldAlert,
+  Siren,
+  Target,
+  Zap,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { type Variants, motion } from "motion/react";
+import { Link } from "../App";
 
 const services = [
   {
-    icon: Globe,
-    title: "Attack Surface Discovery",
-    tagline: "Know your exposure before attackers do",
-    description:
-      "Map your entire digital footprint. We identify all internet-facing assets, domains, subdomains, and entry points attackers could target. A comprehensive inventory of your attack surface is the first step toward securing it.",
-    features: [
-      "Full domain and IP enumeration",
-      "Cloud asset discovery (AWS, GCP, Azure)",
-      "Third-party integration mapping",
-      "Exposure risk scoring",
-    ],
-    accent: "from-blue-500/10 to-transparent",
-  },
-  {
     icon: Search,
-    title: "Subdomain Enumeration",
-    tagline: "Uncover your shadow infrastructure",
-    description:
-      "Discover forgotten or shadow subdomains that may be running vulnerable services. Often the first step attackers take — a staging server left public, a forgotten admin panel, or a legacy API endpoint can become your weakest link.",
-    features: [
-      "Passive and active DNS enumeration",
-      "Certificate transparency log analysis",
-      "Wildcard and wildcard-adjacent detection",
-      "Subdomain takeover vulnerability detection",
-    ],
-    accent: "from-cyan-500/10 to-transparent",
+    title: "Attack Surface Discovery",
+    desc: "Comprehensive mapping of your entire digital footprint — subdomains, open ports, cloud assets, exposed APIs, and forgotten infrastructure. Know what attackers can see before they do.",
+    tags: ["Subdomain Enumeration", "Port Scanning", "Asset Discovery"],
   },
   {
-    icon: AlertTriangle,
-    title: "Vulnerability Scanning",
-    tagline: "Find weaknesses before they're exploited",
-    description:
-      "Automated and manual scanning for known CVEs, misconfigurations, and exposed services across your attack surface. We cross-reference findings against current threat intelligence to prioritize what matters most.",
-    features: [
-      "CVE database cross-referencing",
-      "Open port and service fingerprinting",
-      "SSL/TLS misconfiguration detection",
-      "Web application vulnerability scanning",
-    ],
-    accent: "from-yellow-500/10 to-transparent",
+    icon: ShieldAlert,
+    title: "Vulnerability Assessment",
+    desc: "Systematic identification and classification of security weaknesses across your stack. We combine automated scanning with manual analysis to find exploitable gaps.",
+    tags: ["CVE Analysis", "OWASP Top 10", "Risk Scoring"],
   },
   {
-    icon: FileText,
-    title: "Security Risk Reporting",
-    tagline: "Clarity from complexity",
-    description:
-      "Receive a detailed, actionable security report with risk classifications, findings, and step-by-step remediation guidance. Written for founders and technical leads alike — no security expertise required to understand or act on it.",
-    features: [
-      "CVSS-based risk classification",
-      "Prioritized remediation roadmap",
-      "Executive summary + technical detail",
-      "PDF report delivery in 48 hours",
-    ],
-    accent: "from-green-500/10 to-transparent",
+    icon: Target,
+    title: "Penetration Testing",
+    desc: "Controlled, ethical simulation of real-world cyberattacks on your systems. We think like adversaries to find the paths that lead to critical data and infrastructure.",
+    tags: ["Web App Testing", "Network Pen Test", "Social Engineering"],
+  },
+  {
+    icon: Shield,
+    title: "Security Hardening",
+    desc: "Post-assessment remediation guidance and implementation support. From firewall rules to secure coding practices, we help you fix what we find.",
+    tags: ["Config Review", "Patch Management", "Zero-Trust"],
+  },
+  {
+    icon: Globe,
+    title: "Threat Intelligence",
+    desc: "Continuous monitoring of the threat landscape relevant to your industry and tech stack. Stay ahead of emerging attack vectors targeting startups like yours.",
+    tags: ["Dark Web Monitoring", "IOC Feeds", "Threat Briefings"],
+  },
+  {
+    icon: Siren,
+    title: "Incident Response",
+    desc: "Rapid containment, analysis, and recovery when a security incident occurs. We help you understand what happened, stop the bleeding, and prevent recurrence.",
+    tags: ["Triage", "Forensics", "Recovery Planning"],
   },
 ];
 
-const processSteps = [
-  {
-    icon: Layers,
-    step: "01",
-    title: "Asset Discovery",
-    desc: "We map all your internet-facing assets and infrastructure.",
-  },
-  {
-    icon: Server,
-    step: "02",
-    title: "Scanning & Enumeration",
-    desc: "Automated and manual probing of your attack surface.",
-  },
-  {
-    icon: Activity,
-    step: "03",
-    title: "Risk Analysis",
-    desc: "Findings are classified and prioritized by severity.",
-  },
-  {
-    icon: Lock,
-    step: "04",
-    title: "Report Delivery",
-    desc: "Detailed PDF report with remediation steps delivered in 48 hours.",
-  },
-];
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0 } },
+};
 
 export default function Services() {
-  const navigate = useNavigate();
-
   return (
     <div className="pt-16">
-      {/* Hero */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-40" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/4 blur-3xl" />
-        <div className="relative max-w-4xl mx-auto text-center">
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="flex flex-col gap-5"
           >
-            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # SERVICES
+            <span className="inline-flex items-center justify-center gap-2 text-primary font-mono text-xs tracking-[0.3em] uppercase">
+              <Zap className="w-3 h-3" />
+              What We Offer
             </span>
-            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6 cyber-text">
-              Security Services
+            <h1 className="hero-headline text-4xl sm:text-5xl text-foreground">
+              Security Services Built for Modern Startups
             </h1>
-            <p className="text-lg text-muted-foreground font-sans max-w-2xl mx-auto">
-              Purpose-built security assessments for startups. We find the
-              vulnerabilities in your stack before attackers do.
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              From initial discovery to ongoing monitoring — comprehensive
+              coverage tailored to the speed and scale of your startup.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Services */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto flex flex-col gap-8">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, type: "spring", stiffness: 80 }}
-              whileHover={{ scale: 1.01, x: 4 }}
-              className="relative glass-card rounded-sm p-8 overflow-hidden group hover:neon-border"
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-r ${service.accent} opacity-50 group-hover:opacity-80 transition-opacity`}
-              />
-              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <motion.div
-                      whileHover={{ scale: 1.15, rotate: 8 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className="w-12 h-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0"
-                    >
-                      <service.icon className="w-6 h-6 text-primary" />
-                    </motion.div>
-                    <div>
-                      <div className="font-mono text-xs text-primary tracking-widest uppercase mb-0.5">
-                        {service.tagline}
-                      </div>
-                      <h3 className="font-mono text-xl font-bold text-foreground cyber-text">
-                        {service.title}
-                      </h3>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-sans">
-                    {service.description}
+      <section className="pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {services.map((s, i) => (
+              <motion.div
+                key={s.title}
+                variants={fadeUp}
+                data-ocid={`services.item.${i + 1}`}
+                className="glass-card rounded-xl p-7 flex flex-col gap-5 group"
+              >
+                <div className="w-11 h-11 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/40 transition-all duration-300">
+                  <s.icon className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <h3 className="text-foreground font-semibold text-base leading-tight">
+                    {s.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                    {s.desc}
                   </p>
                 </div>
-                <div>
-                  <h4 className="font-mono text-xs text-muted-foreground tracking-widest uppercase mb-3">
-                    What&apos;s Included
-                  </h4>
-                  <ul className="flex flex-col gap-2">
-                    {service.features.map((f) => (
-                      <motion.li
-                        key={f}
-                        whileHover={{ x: 4 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                        className="flex items-center gap-3 text-sm font-sans text-foreground"
-                      >
-                        <ChevronRight className="w-3 h-3 text-primary flex-shrink-0" />
-                        {f}
-                      </motion.li>
-                    ))}
-                  </ul>
+                <div className="flex flex-wrap gap-2">
+                  {s.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2.5 py-1 rounded-full text-xs font-mono border border-border/50 text-muted-foreground/80 bg-secondary/20"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Process */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-card/10">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # PROCESS
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-mono font-bold text-foreground cyber-text">
-              How It Works
-            </h2>
-          </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className="glass-card rounded-sm p-6 text-center relative"
-              >
-                <div className="font-mono text-4xl font-bold text-primary/20 mb-3">
-                  {step.step}
-                </div>
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3"
-                >
-                  <step.icon className="w-5 h-5 text-primary" />
-                </motion.div>
-                <h3 className="font-mono text-sm font-semibold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-xs text-muted-foreground font-sans leading-relaxed">
-                  {step.desc}
-                </p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto text-center">
+      <section className="pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="glass-card neon-border rounded-xl p-10 text-center flex flex-col items-center gap-5"
           >
-            <h2 className="text-3xl font-mono font-bold text-foreground mb-4 cyber-text">
-              Ready to Get Started?
+            <Bug className="w-10 h-10 text-primary" />
+            <h2 className="hero-headline text-2xl text-foreground">
+              Not sure which service you need?
             </h2>
-            <p className="text-muted-foreground font-sans mb-8">
-              Choose a plan or contact us to discuss a custom engagement.
+            <p className="text-muted-foreground text-sm max-w-sm">
+              Tell us about your startup and we'll recommend the right
+              assessment scope.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={() => navigate({ to: "/pricing" })}
-                size="lg"
-                className="bg-primary text-primary-foreground font-mono tracking-wider hover:opacity-90 animate-pulse-glow"
-              >
-                View Pricing
-              </Button>
-              <Button
-                onClick={() => navigate({ to: "/contact" })}
-                variant="outline"
-                size="lg"
-                className="border-border/60 hover:border-primary/40 hover:text-primary font-mono tracking-wider"
-              >
-                Contact Us
-              </Button>
-            </div>
+            <Link
+              to="/contact"
+              data-ocid="services.cta.primary_button"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all"
+            >
+              Talk to Us <ArrowRight className="w-4 h-4" />
+            </Link>
           </motion.div>
         </div>
       </section>

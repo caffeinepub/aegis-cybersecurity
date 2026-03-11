@@ -1,263 +1,480 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Input } from "@/components/ui/input";
 import {
-  AlertTriangle,
-  ChevronRight,
+  ArrowRight,
+  BadgeCheck,
   Clock,
+  DollarSign,
+  Eye,
   FileText,
-  Globe,
   Lock,
+  MonitorCheck,
   Search,
   Shield,
-  ShieldCheck,
+  ShieldAlert,
+  Terminal as TerminalIcon,
+  Users,
   Zap,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, type Variants, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "../App";
+
+const promises = [
+  {
+    icon: Clock,
+    label: "48hr Turnaround",
+    desc: "Initial report within 48 hours of kickoff",
+  },
+  {
+    icon: DollarSign,
+    label: "0 Hidden Costs",
+    desc: "Transparent pricing, no surprise invoices",
+  },
+  {
+    icon: Lock,
+    label: "100% Confidential",
+    desc: "NDAs and strict data handling as standard",
+  },
+  {
+    icon: MonitorCheck,
+    label: "24/7 Monitoring",
+    desc: "Continuous threat monitoring after assessment",
+  },
+];
 
 const services = [
   {
-    icon: Globe,
-    title: "Attack Surface Discovery",
-    desc: "Map every internet-facing asset attackers could target before they do.",
-  },
-  {
     icon: Search,
-    title: "Subdomain Enumeration",
-    desc: "Uncover forgotten subdomains running vulnerable or misconfigured services.",
+    title: "Attack Surface Discovery",
+    desc: "Map every exposed asset, subdomain, port, and API endpoint in your infrastructure.",
   },
   {
-    icon: AlertTriangle,
-    title: "Vulnerability Scanning",
-    desc: "Automated and manual scanning for CVEs, misconfigs, and exposed services.",
+    icon: ShieldAlert,
+    title: "Vulnerability Assessment",
+    desc: "Systematic scanning and manual review to identify exploitable weaknesses before attackers do.",
   },
+  {
+    icon: Shield,
+    title: "Security Hardening",
+    desc: "Actionable remediation guidance to lock down your systems and reduce risk.",
+  },
+];
+
+const trustSignals = [
   {
     icon: FileText,
-    title: "Security Risk Reporting",
-    desc: "Actionable reports with risk classifications and step-by-step remediation.",
+    text: "Strict NDAs signed before every engagement",
+  },
+  {
+    icon: Shield,
+    text: "Zero data retained after report delivery",
+  },
+  {
+    icon: Users,
+    text: "Founders-only team — no outsourced work",
+  },
+  {
+    icon: Zap,
+    text: "Built for startups — not enterprise complexity",
+  },
+  {
+    icon: BadgeCheck,
+    text: "Report delivered in plain English, not jargon",
   },
 ];
 
-const pricing = [
-  { name: "Starter Exposure Scan", price: "₹999", popular: false },
-  { name: "Growth Security Pack", price: "₹2,999", popular: true },
-  { name: "Full Security Audit", price: "₹7,999", popular: false },
-];
-
-const promises = [
-  { icon: Clock, value: "48hr", label: "Turnaround" },
-  { icon: ShieldCheck, value: "0", label: "Hidden Costs" },
-  { icon: Lock, value: "100%", label: "Confidential" },
-  { icon: Zap, value: "24/7", label: "Threat Monitoring" },
-];
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.12,
-    },
+const pricingTiers = [
+  {
+    name: "Starter Security Scan",
+    price: "₹15,000",
+    billing: "one-time",
+    popular: false,
+    features: [
+      "Attack surface discovery",
+      "DNS & subdomain enumeration",
+      "Open port scanning",
+      "Basic vulnerability report",
+      "Email support",
+    ],
   },
+  {
+    name: "Growth Security Pack",
+    price: "₹45,000",
+    billing: "one-time",
+    popular: true,
+    features: [
+      "Everything in Starter",
+      "Deep vulnerability assessment",
+      "Manual expert review",
+      "Remediation roadmap",
+      "30-day follow-up scan",
+      "Priority support",
+    ],
+  },
+  {
+    name: "Enterprise Security Suite",
+    price: "Custom",
+    billing: "tailored",
+    popular: false,
+    features: [
+      "Everything in Growth",
+      "Continuous monitoring",
+      "Dedicated security advisor",
+      "Compliance readiness",
+      "Quarterly assessments",
+    ],
+  },
+];
+
+const scanLines = [
+  "[*] Initializing AEGIS scan engine v2.4.1",
+  "[*] Target: {domain}",
+  "[+] Resolving DNS records...",
+  "[+] Discovered 14 subdomains",
+  "[+] Port scan complete: 8 open ports",
+  "[!] CVE-2024-1234 found on api.{domain}",
+  "[!] Exposed admin panel at /admin (no auth)",
+  "[+] SSL certificate expires in 12 days",
+  "[*] Generating full report...",
+  "[\u2713] Scan complete. 3 critical, 7 medium, 12 low",
+];
+
+const sampleFindings = [
+  {
+    severity: "CRITICAL",
+    color: "text-red-400",
+    badge: "bg-red-500/20 text-red-400 border-red-500/40",
+    title: "Exposed admin panel at /admin",
+    detail: "No authentication required — direct access to admin dashboard",
+  },
+  {
+    severity: "HIGH",
+    color: "text-orange-400",
+    badge: "bg-orange-500/20 text-orange-400 border-orange-500/40",
+    title: "SSL certificate expires in 12 days",
+    detail: "Risk of service disruption and user trust erosion",
+  },
+  {
+    severity: "MEDIUM",
+    color: "text-yellow-400",
+    badge: "bg-yellow-500/20 text-yellow-400 border-yellow-500/40",
+    title: "Outdated WordPress plugin (CVE-2024-1234)",
+    detail: "Found on blog subdomain — known remote code execution vector",
+  },
+];
+
+function Terminal() {
+  const [lines, setLines] = useState<string[]>([]);
+  const [cursor, setCursor] = useState(true);
+  const ref = useRef(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (ref.current < scanLines.length) {
+        setLines((prev) => [
+          ...prev,
+          (scanLines[ref.current] || "").replace(
+            /\{domain\}/g,
+            "acme-startup.io",
+          ),
+        ]);
+        ref.current += 1;
+      } else {
+        clearInterval(interval);
+      }
+    }, 600);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const blink = setInterval(() => setCursor((c) => !c), 500);
+    return () => clearInterval(blink);
+  }, []);
+
+  return (
+    <div className="glass-card rounded-lg overflow-hidden font-mono text-xs">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-secondary/30">
+        <div className="w-3 h-3 rounded-full bg-red-500/70" />
+        <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+        <div className="w-3 h-3 rounded-full bg-green-500/70" />
+        <span className="ml-3 text-muted-foreground text-xs">
+          aegis-scan — zsh
+        </span>
+      </div>
+      <div className="p-4 space-y-1.5 min-h-[240px] bg-black/30">
+        {lines.map((line, i) => (
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: terminal lines can be identical
+            key={`terminal-line-${i}`}
+            className={`leading-relaxed ${
+              line.startsWith("[!]")
+                ? "text-yellow-400"
+                : line.startsWith("[\u2713]")
+                  ? "text-primary"
+                  : line.startsWith("[+]")
+                    ? "text-green-400"
+                    : "text-muted-foreground"
+            }`}
+          >
+            {line}
+          </div>
+        ))}
+        <span className="text-primary">{cursor ? "\u258b" : " "}</span>
+      </div>
+    </div>
+  );
+}
+
+function DemoScanner() {
+  const [domain, setDomain] = useState("");
+  const [scanning, setScanning] = useState(false);
+  const [lines, setLines] = useState<string[]>([]);
+  const [done, setDone] = useState(false);
+  const [cursor, setCursor] = useState(true);
+  const lineRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const blink = setInterval(() => setCursor((c) => !c), 500);
+    return () => clearInterval(blink);
+  }, []);
+
+  const effectiveDomain = domain.trim() || "your-startup.io";
+
+  function startScan() {
+    if (scanning) return;
+    setScanning(true);
+    setLines([]);
+    setDone(false);
+    lineRef.current = 0;
+
+    intervalRef.current = setInterval(() => {
+      if (lineRef.current < scanLines.length) {
+        const line = (scanLines[lineRef.current] || "").replace(
+          /\{domain\}/g,
+          effectiveDomain,
+        );
+        setLines((prev) => [...prev, line]);
+        lineRef.current += 1;
+      } else {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        setDone(true);
+        setScanning(false);
+      }
+    }, 500);
+  }
+
+  function reset() {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setLines([]);
+    setScanning(false);
+    setDone(false);
+    setDomain("");
+    lineRef.current = 0;
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Input
+          data-ocid="home.demo.input"
+          value={domain}
+          onChange={(e) => setDomain(e.target.value)}
+          placeholder="Enter your domain (e.g. acme-startup.io)"
+          className="flex-1 bg-secondary/40 border-border/50 text-foreground placeholder:text-muted-foreground font-mono text-sm"
+          disabled={scanning}
+          onKeyDown={(e) =>
+            e.key === "Enter" && !scanning && !done && startScan()
+          }
+        />
+        {!done ? (
+          <Button
+            data-ocid="home.demo.submit_button"
+            onClick={startScan}
+            disabled={scanning}
+            className="bg-primary text-primary-foreground hover:opacity-90 font-semibold px-6 animate-pulse-glow"
+          >
+            <TerminalIcon className="w-4 h-4 mr-2" />
+            {scanning ? "Scanning..." : "Run Demo Scan"}
+          </Button>
+        ) : (
+          <Button
+            data-ocid="home.demo.secondary_button"
+            onClick={reset}
+            variant="outline"
+            className="border-primary/40 text-primary hover:bg-primary/10 px-6"
+          >
+            Reset
+          </Button>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {lines.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="glass-card rounded-lg overflow-hidden font-mono text-xs"
+          >
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-secondary/30">
+              <div className="w-3 h-3 rounded-full bg-red-500/70" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+              <div className="w-3 h-3 rounded-full bg-green-500/70" />
+              <span className="ml-3 text-muted-foreground text-xs">
+                aegis-demo — live scan
+              </span>
+            </div>
+            <div className="p-4 space-y-1.5 min-h-[200px] max-h-[320px] overflow-y-auto bg-black/40">
+              {lines.map((line, i) => (
+                <motion.div
+                  // biome-ignore lint/suspicious/noArrayIndexKey: terminal lines can be identical
+                  key={`demo-line-${i}`}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`leading-relaxed ${
+                    line.startsWith("[!]")
+                      ? "text-yellow-400"
+                      : line.startsWith("[\u2713]")
+                        ? "text-primary"
+                        : line.startsWith("[+]")
+                          ? "text-green-400"
+                          : "text-muted-foreground"
+                  }`}
+                >
+                  {line}
+                </motion.div>
+              ))}
+              {!done && (
+                <span className="text-primary">{cursor ? "\u258b" : " "}</span>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <p className="text-xs text-muted-foreground/60 italic text-center">
+        &#9888; This is a simulated demo. Real scans require a paid engagement
+        with signed NDA.
+      </p>
+    </div>
+  );
+}
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 100 },
-  },
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0 } },
 };
 
 export default function Home() {
-  const navigate = useNavigate();
-
   return (
-    <div className="overflow-hidden">
+    <div className="pt-16">
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center pt-16">
-        {/* Background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('/assets/generated/hero-cyber-bg.dim_1600x900.jpg')",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/98 via-gray-950/97 to-zinc-950/98" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute inset-0 matrix-bg" />
-
-        {/* Animated scan line */}
-        <div
-          className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-40"
-          style={{ animation: "scan 6s linear infinite", top: 0 }}
-        />
-
-        {/* Glow orbs */}
-        <motion.div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/6 blur-3xl"
-          animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.8, 0.5] }}
-          transition={{
-            duration: 7,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-primary/10 blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
-          transition={{
-            duration: 9,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-        />
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Badge
-              variant="outline"
-              className="mb-6 border-primary/40 text-primary font-mono text-xs tracking-widest px-4 py-1.5 bg-primary/5 animate-neon-pulse"
+      <section className="relative min-h-[88vh] flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Text */}
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              animate="show"
+              className="flex flex-col gap-7"
             >
-              <Lock className="w-3 h-3 mr-2" />
-              AEGIS-IND CYBERSECURITY
-            </Badge>
-          </motion.div>
+              <motion.div variants={fadeUp}>
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/25 bg-primary/8 text-primary text-xs font-mono tracking-widest uppercase">
+                  <Zap className="w-3 h-3" />
+                  Cybersecurity for Startups
+                </span>
+              </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.1,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-mono font-bold leading-tight mb-6 cyber-text animate-glitch"
-          >
-            <span className="text-white">Your Startup&apos;s</span>
-            <br className="hidden sm:block" />
-            <span className="gradient-text">Attack Surface</span>
-            <br className="hidden sm:block" />
-            <span className="text-white">Mapped &amp; Secured</span>
-          </motion.h1>
+              <motion.h1
+                variants={fadeUp}
+                className="hero-headline text-5xl sm:text-6xl xl:text-7xl text-foreground"
+              >
+                Your Startup&apos;s{" "}
+                <span className="gradient-text animate-neon-pulse">
+                  Attack Surface
+                </span>{" "}
+                Mapped &amp; Secured
+              </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.2,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="text-xl sm:text-2xl text-primary font-mono mb-4 neon-text animate-neon-pulse"
-          >
-            Discover. Assess. Harden. Before attackers strike.
-          </motion.p>
+              <motion.p
+                variants={fadeUp}
+                className="text-lg text-muted-foreground leading-relaxed max-w-lg"
+              >
+                Discover. Assess. Harden.{" "}
+                <span className="text-foreground/80 font-medium">
+                  Before attackers strike.
+                </span>{" "}
+                AEGIS-IND gives early-stage startups enterprise-grade security
+                without the enterprise price tag.
+              </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.3,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="text-base sm:text-lg text-slate-200 max-w-2xl mx-auto mb-10 leading-relaxed font-sans"
-          >
-            AEGIS-IND helps early-stage startups discover exposed digital
-            assets, security risks, and vulnerabilities before attackers exploit
-            them.
-          </motion.p>
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+                <Link
+                  to="/contact"
+                  data-ocid="home.hero.primary_button"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-md bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all animate-pulse-glow"
+                >
+                  Start Your Security Scan
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  to="/services"
+                  data-ocid="home.hero.secondary_button"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-md border border-border/60 text-foreground font-medium text-sm hover:border-primary/40 hover:bg-primary/5 transition-all"
+                >
+                  View Services
+                </Link>
+              </motion.div>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.4,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Button
-              data-ocid="hero.cta.primary_button"
-              onClick={() => navigate({ to: "/contact" })}
-              size="lg"
-              className="bg-primary text-primary-foreground font-mono tracking-wider text-sm animate-pulse-glow hover:opacity-90 px-8 py-6 text-base border border-primary/50"
+            {/* Terminal */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
             >
-              <Shield className="w-4 h-4 mr-2" />
-              Request Security Scan
-            </Button>
-            <Button
-              data-ocid="hero.cta.secondary_button"
-              onClick={() => navigate({ to: "/services" })}
-              variant="outline"
-              size="lg"
-              className="border-border/60 text-white hover:border-primary/40 hover:text-primary font-mono tracking-wider text-sm px-8 py-6 text-base bg-transparent"
-            >
-              View Services
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </Button>
-          </motion.div>
-
-          {/* Terminal badge */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
-            className="mt-12 inline-flex items-center gap-2 glass-card px-4 py-2 rounded-sm"
-          >
-            <span className="text-primary text-xs font-mono">$</span>
-            <span className="text-xs font-mono text-slate-300">
-              aegis-ind --scan --target your-startup.com
-            </span>
-            <span className="text-primary text-xs font-mono animate-blink">
-              _
-            </span>
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400">
-          <span className="text-xs font-mono tracking-widest uppercase">
-            Scroll
-          </span>
-          <div className="w-px h-10 bg-gradient-to-b from-primary/40 to-transparent" />
+              <Terminal />
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Service Promise Bar */}
-      <section className="border-y border-border/40 bg-card/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Promise cards */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-6"
-            variants={containerVariants}
+            variants={stagger}
             initial="hidden"
-            whileInView="visible"
+            whileInView="show"
             viewport={{ once: true }}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
           >
             {promises.map((p) => (
               <motion.div
                 key={p.label}
-                variants={itemVariants}
-                className="text-center flex flex-col items-center gap-2"
+                variants={fadeUp}
+                className="glass-card rounded-lg p-5 flex flex-col gap-3"
               >
-                <p.icon className="w-6 h-6 text-primary/70" />
-                <div className="text-3xl font-mono font-bold text-primary neon-text animate-neon-pulse">
-                  {p.value}
+                <div className="w-9 h-9 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <p.icon className="w-4 h-4 text-primary" />
                 </div>
-                <div className="text-xs text-slate-300 font-sans tracking-wide">
-                  {p.label}
+                <div>
+                  <div className="font-semibold text-foreground text-sm mb-1">
+                    {p.label}
+                  </div>
+                  <div className="text-xs text-muted-foreground leading-relaxed">
+                    {p.desc}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -265,265 +482,376 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 grid-bg opacity-40" />
-        <div className="relative max-w-7xl mx-auto">
+      {/* Trust section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # SERVICES
+            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-3 block">
+              Trust &amp; Transparency
             </span>
-            <h2 className="text-3xl sm:text-5xl font-mono font-bold text-white mb-4 cyber-text">
-              How We Protect Your Startup
+            <h2 className="hero-headline text-3xl sm:text-4xl text-foreground">
+              Why Startups Trust AEGIS-IND
             </h2>
-            <p className="text-slate-300 text-lg max-w-2xl mx-auto font-sans">
-              End-to-end security coverage tailored for early-stage companies
-              and tech founders.
-            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {services.map((service, i) => (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
+            {trustSignals.map((signal) => (
               <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className="glass-card rounded-sm p-6 group hover:neon-border cursor-default"
+                key={signal.text}
+                variants={fadeUp}
+                className="glass-card rounded-lg px-5 py-4 flex items-center gap-4"
               >
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:border-primary/40 transition-all duration-300"
-                >
-                  <service.icon className="w-5 h-5 text-primary" />
-                </motion.div>
-                <h3 className="font-mono text-sm font-semibold text-white mb-2 tracking-wide">
-                  {service.title}
+                <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center">
+                  <signal.icon className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-sm text-foreground/90 leading-snug">
+                  {signal.text}
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Services preview */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-14"
+          >
+            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-3 block">
+              What We Do
+            </span>
+            <h2 className="hero-headline text-3xl sm:text-4xl text-foreground">
+              Core Security Services
+            </h2>
+          </motion.div>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {services.map((s) => (
+              <motion.div
+                key={s.title}
+                variants={fadeUp}
+                className="glass-card rounded-lg p-7 flex flex-col gap-4"
+              >
+                <div className="w-10 h-10 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <s.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-foreground font-semibold text-base">
+                  {s.title}
                 </h3>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                  {service.desc}
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {s.desc}
                 </p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           <div className="text-center mt-10">
             <Link
               to="/services"
-              className="inline-flex items-center gap-2 text-sm text-primary font-mono hover:neon-text transition-all"
+              data-ocid="home.services.secondary_button"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
             >
-              Explore all services <ChevronRight className="w-4 h-4" />
+              View all services <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Pricing preview */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-card/10">
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-14"
           >
-            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # PRICING
+            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-3 block">
+              Pricing
             </span>
-            <h2 className="text-3xl sm:text-5xl font-mono font-bold text-white mb-4 cyber-text">
-              Transparent Pricing
+            <h2 className="hero-headline text-3xl sm:text-4xl text-foreground">
+              Simple, Transparent Pricing
             </h2>
-            <p className="text-slate-300 text-lg max-w-xl mx-auto font-sans">
-              Security assessments sized for startups — not enterprise budgets.
+            <p className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">
+              No retainers. No lock-in. Pay once, get secured.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pricing.map((plan, i) => (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {pricingTiers.map((tier, idx) => (
               <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
-                whileHover={{ scale: 1.03, y: -4 }}
-                className={`relative glass-card rounded-sm p-8 text-center ${
-                  plan.popular
-                    ? "neon-border shadow-neon"
-                    : "hover:border-primary/20"
+                key={tier.name}
+                variants={fadeUp}
+                className={`glass-card rounded-xl p-6 flex flex-col gap-4 relative ${
+                  tier.popular ? "neon-border" : ""
                 }`}
               >
-                {plan.popular && (
+                {tier.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground font-mono text-[10px] tracking-widest px-3">
-                      MOST POPULAR
-                    </Badge>
+                    <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full tracking-wider uppercase">
+                      Most Popular
+                    </span>
                   </div>
                 )}
-                <h3 className="font-mono text-sm font-semibold text-white mb-3">
-                  {plan.name}
-                </h3>
-                <div className="text-4xl font-mono font-bold text-primary neon-text mb-6">
-                  {plan.price}
+                <div>
+                  <h3 className="text-foreground font-semibold text-sm mb-2">
+                    {tier.name}
+                  </h3>
+                  <div className="flex items-end gap-2">
+                    <span
+                      className={`hero-headline text-3xl ${tier.popular ? "gradient-text" : "text-foreground"}`}
+                    >
+                      {tier.price}
+                    </span>
+                    <span className="text-muted-foreground text-xs mb-1">
+                      {tier.billing}
+                    </span>
+                  </div>
                 </div>
-                <Link to="/pricing">
-                  <Button
-                    variant={plan.popular ? "default" : "outline"}
-                    className={`w-full font-mono text-sm tracking-wide ${
-                      plan.popular
-                        ? "bg-primary text-primary-foreground hover:opacity-90"
-                        : "border-border/60 hover:border-primary/40 hover:text-primary"
-                    }`}
-                  >
-                    View Details
-                  </Button>
+                <ul className="space-y-2 flex-1">
+                  {tier.features.map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-2 text-xs text-muted-foreground"
+                    >
+                      <span className="text-primary mt-0.5">&#10003;</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  data-ocid={`home.pricing.primary_button.${idx + 1}`}
+                  className={`text-center text-xs font-semibold py-2.5 px-4 rounded-md transition-all ${
+                    tier.popular
+                      ? "bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow"
+                      : "border border-border/50 text-foreground hover:border-primary/40 hover:bg-primary/5"
+                  }`}
+                >
+                  Get Started
                 </Link>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-8">
             <Link
               to="/pricing"
-              className="inline-flex items-center gap-2 text-sm text-primary font-mono hover:neon-text transition-all"
+              data-ocid="home.pricing.secondary_button"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
             >
-              See full pricing details <ChevronRight className="w-4 h-4" />
+              View Full Pricing <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Why AEGIS-IND */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="relative max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ type: "spring", stiffness: 100 }}
-            >
-              <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-                # WHY AEGIS-IND
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-mono font-bold text-white mb-6 cyber-text">
-                Startup-Speed Security,
-                <br />
-                Enterprise-Grade Results
-              </h2>
-              <p className="text-slate-300 leading-relaxed font-sans mb-6">
-                AEGIS-IND delivers the same rigorous security coverage used by
-                leading tech companies — at a pace and price designed for
-                founders building the next big thing.
-              </p>
-              <ul className="flex flex-col gap-3">
-                {[
-                  "Fast turnaround — reports in 48 hours",
-                  "Founder-friendly pricing",
-                  "Clear, actionable remediation steps",
-                  "No security expertise required from your team",
-                ].map((item) => (
-                  <motion.li
-                    key={item}
-                    whileHover={{ x: 4 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className="flex items-center gap-3 text-sm text-white font-sans"
-                  >
-                    <Zap className="w-4 h-4 text-primary flex-shrink-0" />
-                    {item}
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ type: "spring", stiffness: 100 }}
-              className="glass-card rounded-sm p-8 font-mono text-sm"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-3 h-3 rounded-full bg-red-500/70" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-                <div className="w-3 h-3 rounded-full bg-green-500/70" />
-                <span className="ml-2 text-slate-300 text-xs">
-                  aegis-ind-scan.sh
-                </span>
-              </div>
-              <div className="space-y-2 text-xs">
-                <div>
-                  <span className="text-primary">$</span>{" "}
-                  <span className="text-white">
-                    aegis-ind scan --target acme.io
-                  </span>
-                </div>
-                <div className="text-slate-300"> → Resolving domains...</div>
-                <div className="text-slate-300"> → Found 24 subdomains</div>
-                <div className="text-yellow-400/80">
-                  ⚠ admin.acme.io — port 8080 exposed
-                </div>
-                <div className="text-yellow-400/80">
-                  ⚠ dev.acme.io — SSL cert expired
-                </div>
-                <div className="text-red-400/80">
-                  ✗ api.acme.io — CVE-2024-1234 detected
-                </div>
-                <div className="text-slate-300">
-                  → Scanning for misconfigurations...
-                </div>
-                <div className="text-green-400/80">
-                  ✓ Report generated: report.pdf
-                </div>
-                <div>
-                  <span className="text-primary">$</span>{" "}
-                  <span className="animate-blink text-primary">_</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      {/* Live Demo Scanner */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="relative glass-card neon-border rounded-sm p-12 text-center overflow-hidden"
+            className="text-center mb-12"
           >
-            <div className="absolute inset-0 grid-bg opacity-50" />
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-            <div className="relative z-10">
-              <Shield className="w-12 h-12 text-primary mx-auto mb-6 animate-float" />
-              <h2 className="text-3xl sm:text-4xl font-mono font-bold text-white mb-4 cyber-text">
-                Know Your Exposure Before Attackers Do
-              </h2>
-              <p className="text-slate-300 font-sans mb-8 max-w-xl mx-auto">
-                Don&apos;t wait for a breach. Get a comprehensive security
-                assessment and know exactly where you stand.
+            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-3 block">
+              Interactive Demo
+            </span>
+            <h2 className="hero-headline text-3xl sm:text-4xl text-foreground">
+              See AEGIS-IND in Action
+            </h2>
+            <p className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">
+              Type any domain and watch the scan engine run live.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card rounded-xl p-6 sm:p-8"
+          >
+            <DemoScanner />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Sample Report */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-3 block">
+              Sample Output
+            </span>
+            <h2 className="hero-headline text-3xl sm:text-4xl text-foreground">
+              What Your Report Looks Like
+            </h2>
+            <p className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">
+              Clear, actionable findings — no impenetrable security jargon.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card neon-border rounded-xl overflow-hidden"
+          >
+            {/* Report header */}
+            <div className="px-6 py-4 bg-secondary/40 border-b border-border/40 font-mono text-xs">
+              <div className="flex items-center gap-2 text-primary mb-1">
+                <FileText className="w-3.5 h-3.5" />
+                <span className="font-bold tracking-wide">
+                  AEGIS-IND Security Assessment Report
+                </span>
+              </div>
+              <div className="text-muted-foreground">
+                Target: <span className="text-foreground">acme-startup.io</span>
+                <span className="mx-3 opacity-40">|</span>
+                Date: <span className="text-foreground">2026-03-11</span>
+                <span className="mx-3 opacity-40">|</span>
+                <span className="text-red-400 font-semibold">CONFIDENTIAL</span>
+              </div>
+            </div>
+
+            {/* Findings */}
+            <div className="p-6 space-y-4">
+              <div className="font-mono text-xs text-muted-foreground mb-2 uppercase tracking-widest">
+                Findings Summary — 3 of 22 shown
+              </div>
+              {sampleFindings.map((finding, i) => (
+                <motion.div
+                  key={finding.title}
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex flex-col sm:flex-row sm:items-start gap-3 p-4 rounded-lg bg-secondary/20 border border-border/30"
+                >
+                  <Badge
+                    className={`shrink-0 font-mono text-xs font-bold border ${finding.badge} self-start`}
+                  >
+                    {finding.severity}
+                  </Badge>
+                  <div className="flex-1">
+                    <div
+                      className={`font-semibold text-sm ${finding.color} font-mono`}
+                    >
+                      {finding.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                      {finding.detail}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
+              <div className="pt-4 text-center">
+                <Link
+                  to="/contact"
+                  data-ocid="home.report.primary_button"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all animate-pulse-glow"
+                >
+                  Get Your Real Report <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA — enhanced */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div
+              className="absolute inset-0 rounded-2xl pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, oklch(0.75 0.22 210 / 0.18) 0%, transparent 70%)",
+                animation: "pulse-glow 3s ease-in-out infinite",
+                filter: "blur(24px)",
+                transform: "scale(1.08)",
+              }}
+            />
+
+            <div
+              className="glass-card rounded-2xl p-10 sm:p-14 text-center flex flex-col items-center gap-6 relative"
+              style={{
+                borderColor: "oklch(0.75 0.22 210 / 0.65)",
+                boxShadow:
+                  "0 0 32px oklch(0.75 0.22 210 / 0.30), 0 0 80px oklch(0.75 0.22 210 / 0.12), inset 0 0 24px oklch(0.75 0.22 210 / 0.06)",
+              }}
+            >
+              <div className="w-16 h-16 rounded-full bg-primary/15 border-2 border-primary/40 flex items-center justify-center animate-pulse-glow">
+                <Eye className="w-8 h-8 text-primary" />
+              </div>
+
+              <div className="space-y-3">
+                <h2 className="hero-headline text-4xl sm:text-5xl text-foreground">
+                  Ready to Secure Your Startup?
+                </h2>
+                <p className="text-red-400/90 font-mono text-sm font-semibold">
+                  &#9888; Most startups have critical exposures they don&apos;t
+                  know about.
+                </p>
+              </div>
+
+              <p className="text-muted-foreground max-w-md leading-relaxed">
+                Book a free consultation and let us map your attack surface
+                before someone else does.
               </p>
-              <Button
-                data-ocid="home.cta.button"
-                onClick={() => navigate({ to: "/contact" })}
-                size="lg"
-                className="bg-primary text-primary-foreground font-mono tracking-wider text-sm animate-pulse-glow hover:opacity-90 px-10 py-6 text-base border border-primary/50"
+
+              <Link
+                to="/contact"
+                data-ocid="home.cta.primary_button"
+                className="inline-flex items-center gap-3 px-10 py-5 rounded-lg bg-primary text-primary-foreground font-bold text-base hover:opacity-90 transition-all animate-pulse-glow"
               >
-                <Shield className="w-4 h-4 mr-2" />
-                Request Security Scan
-              </Button>
+                Request a Free Scan <ArrowRight className="w-5 h-5" />
+              </Link>
+
+              <p className="text-xs text-muted-foreground/60">
+                No commitment. Free 30-min consultation.
+              </p>
             </div>
           </motion.div>
         </div>

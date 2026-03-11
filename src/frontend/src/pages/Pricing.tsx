@@ -1,289 +1,177 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "@tanstack/react-router";
-import { Check, Shield, Star, Zap } from "lucide-react";
-import { motion } from "motion/react";
+import { ArrowRight, Check, Zap } from "lucide-react";
+import { type Variants, motion } from "motion/react";
+import { Link } from "../App";
 
-const plans = [
+const tiers = [
   {
-    id: "starter",
-    name: "Starter Exposure Scan",
-    price: "₹999",
-    tagline: "Know your surface",
-    icon: Zap,
-    popular: false,
-    cta: "Get Started",
-    ocid: "pricing.starter.button",
+    name: "Starter Security Scan",
+    price: "\u20b915,000",
+    period: "one-time",
+    desc: "Perfect for early-stage startups doing their first security assessment.",
     features: [
       "Attack surface discovery",
-      "Subdomain discovery",
-      "Open port scanning",
-      "Basic exposure report",
+      "Basic vulnerability scan",
+      "Up to 3 domains/subdomains",
+      "Prioritised findings report",
+      "48-hour turnaround",
+      "Email support",
     ],
-    notIncluded: [
-      "Vulnerability scanning",
-      "PDF security report",
-      "Manual assessment",
-      "Remediation guidance",
-    ],
-  },
-  {
-    id: "assessment",
-    name: "Startup Security Assessment",
-    price: "₹2,999",
-    tagline: "Comprehensive coverage",
-    icon: Shield,
-    popular: true,
     cta: "Get Started",
-    ocid: "pricing.assessment.button",
-    features: [
-      "Full vulnerability scan",
-      "Security risk classification",
-      "Detailed PDF security report",
-      "Misconfiguration detection",
-      "Attack surface discovery",
-      "Subdomain discovery",
-    ],
-    notIncluded: ["Manual vulnerability assessment", "API security review"],
+    highlight: false,
   },
   {
-    id: "audit",
-    name: "Full Security Audit",
-    price: "₹7,999",
-    tagline: "Maximum assurance",
-    icon: Star,
-    popular: false,
-    cta: "Contact Us",
-    ocid: "pricing.audit.button",
+    name: "Growth Security Pack",
+    price: "\u20b945,000",
+    period: "one-time",
+    desc: "Comprehensive security for growing startups with more complex infrastructure.",
     features: [
-      "Manual vulnerability assessment",
-      "API security review",
-      "Attack surface analysis",
-      "Remediation guidance",
-      "Full vulnerability scan",
-      "Detailed PDF security report",
+      "Everything in Starter",
+      "Full penetration testing",
+      "Unlimited domains/subdomains",
+      "OWASP Top 10 coverage",
+      "Remediation guidance session",
+      "30-day follow-up scan",
       "Priority support",
     ],
-    notIncluded: [],
+    cta: "Most Popular",
+    highlight: true,
+  },
+  {
+    name: "Enterprise Security Suite",
+    price: "Custom",
+    period: "tailored",
+    desc: "Ongoing security partnership for funded startups and scaling tech companies.",
+    features: [
+      "Everything in Growth Pack",
+      "Continuous monitoring",
+      "Threat intelligence briefings",
+      "Incident response retainer",
+      "Quarterly reassessments",
+      "Dedicated security advisor",
+      "NDA included as standard",
+    ],
+    cta: "Contact Us",
+    highlight: false,
   },
 ];
 
-const faqs = [
-  {
-    q: "How long does an assessment take?",
-    a: "Starter scans are delivered within 24 hours. Full assessments take 48–72 hours. Audits may take up to 5 business days depending on scope.",
-  },
-  {
-    q: "Do I need technical knowledge to act on the report?",
-    a: "No. Our reports are written for founders and non-security teams. Each finding comes with clear, step-by-step remediation guidance.",
-  },
-  {
-    q: "What if my startup is pre-launch?",
-    a: "Perfect timing. Finding vulnerabilities before launch is far cheaper than a breach post-launch. We work with MVPs, staging environments, and production systems.",
-  },
-  {
-    q: "Is this a one-time service or ongoing?",
-    a: "Both options are available. Most startups start with a one-time assessment and return as their infrastructure grows.",
-  },
-];
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0 } },
+};
 
 export default function Pricing() {
-  const navigate = useNavigate();
-
   return (
     <div className="pt-16">
-      {/* Hero */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-40" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/4 blur-3xl" />
-        <div className="relative max-w-3xl mx-auto text-center">
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="flex flex-col gap-5"
           >
-            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # PRICING
-            </span>
-            <h1 className="text-4xl sm:text-6xl font-mono font-bold text-foreground mb-6 cyber-text">
+            <span className="inline-flex items-center justify-center gap-2 text-primary font-mono text-xs tracking-[0.3em] uppercase">
+              <Zap className="w-3 h-3" />
               Simple Pricing
+            </span>
+            <h1 className="hero-headline text-4xl sm:text-5xl text-foreground">
+              Transparent Security Pricing
             </h1>
-            <p className="text-lg text-muted-foreground font-sans">
-              Security assessments sized for startups — not enterprise budgets.
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              No hidden fees. No surprise invoices. Pay only for what your
+              startup actually needs.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Plans */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8">
+      <section className="pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            {plans.map((plan, i) => (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch"
+          >
+            {tiers.map((tier, i) => (
               <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
-                whileHover={{
-                  scale: plan.popular ? 1.04 : 1.02,
-                  y: -4,
-                }}
-                className={`relative glass-card rounded-sm p-8 flex flex-col ${
-                  plan.popular
-                    ? "neon-border shadow-neon-lg"
-                    : "border border-border/40 hover:border-primary/20"
+                key={tier.name}
+                variants={fadeUp}
+                data-ocid={`pricing.item.${i + 1}`}
+                className={`relative glass-card rounded-xl p-8 flex flex-col gap-6 ${
+                  tier.highlight
+                    ? "border-primary/50 shadow-[0_0_40px_oklch(0.75_0.22_210_/_0.12)]"
+                    : ""
                 }`}
               >
-                {plan.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground font-mono text-[10px] tracking-widest px-4 py-1">
+                {tier.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="px-4 py-1 rounded-full bg-primary text-primary-foreground text-xs font-mono font-semibold tracking-wider">
                       MOST POPULAR
-                    </Badge>
+                    </span>
                   </div>
                 )}
-
-                <div className="flex items-center gap-3 mb-6">
-                  <motion.div
-                    whileHover={{ scale: 1.15, rotate: 8 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className={`w-10 h-10 rounded-sm flex items-center justify-center ${
-                      plan.popular
-                        ? "bg-primary/20 border border-primary/40"
-                        : "bg-secondary/50 border border-border/40"
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-foreground font-semibold text-lg">
+                    {tier.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {tier.desc}
+                  </p>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span
+                    className={`text-4xl font-bold tracking-tight ${
+                      tier.highlight ? "gradient-text" : "text-foreground"
                     }`}
                   >
-                    <plan.icon
-                      className={`w-5 h-5 ${
-                        plan.popular ? "text-primary" : "text-muted-foreground"
-                      }`}
-                    />
-                  </motion.div>
-                  <div>
-                    <div className="font-mono text-xs text-muted-foreground tracking-widest uppercase">
-                      {plan.tagline}
-                    </div>
-                  </div>
+                    {tier.price}
+                  </span>
+                  <span className="text-muted-foreground text-sm font-mono">
+                    {tier.period}
+                  </span>
                 </div>
-
-                <h3 className="font-mono text-base font-bold text-foreground mb-2">
-                  {plan.name}
-                </h3>
-                <div
-                  className={`text-5xl font-mono font-bold mb-8 ${
-                    plan.popular ? "text-primary neon-text" : "text-foreground"
-                  }`}
-                >
-                  {plan.price}
-                </div>
-
-                <div className="flex-1">
-                  <div className="font-mono text-xs text-muted-foreground tracking-widest uppercase mb-3">
-                    Includes
-                  </div>
-                  <ul className="flex flex-col gap-2 mb-6">
-                    {plan.features.map((f) => (
-                      <li
-                        key={f}
-                        className="flex items-start gap-3 text-sm font-sans text-foreground"
-                      >
-                        <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                        {f}
-                      </li>
-                    ))}
-                    {plan.notIncluded.map((f) => (
-                      <li
-                        key={f}
-                        className="flex items-start gap-3 text-sm font-sans text-muted-foreground/40 line-through"
-                      >
-                        <Check className="w-4 h-4 text-border/40 flex-shrink-0 mt-0.5" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Button
-                  data-ocid={plan.ocid}
-                  onClick={() => navigate({ to: "/contact" })}
-                  className={`w-full font-mono text-sm tracking-wider ${
-                    plan.popular
+                <ul className="flex flex-col gap-3 flex-1">
+                  {tier.features.map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-3 text-sm text-muted-foreground"
+                    >
+                      <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  data-ocid={`pricing.tier.${i + 1}.primary_button`}
+                  className={`mt-auto flex items-center justify-center gap-2 py-3 rounded-md text-sm font-semibold transition-all ${
+                    tier.highlight
                       ? "bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow"
-                      : "border border-border/60 bg-transparent text-foreground hover:border-primary/40 hover:text-primary"
+                      : "border border-border/60 text-foreground hover:border-primary/40 hover:bg-primary/5"
                   }`}
-                  variant={plan.popular ? "default" : "outline"}
                 >
-                  {plan.cta}
-                </Button>
+                  {tier.cta}{" "}
+                  {tier.highlight && <ArrowRight className="w-4 h-4" />}
+                </Link>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 mt-16 bg-card/10">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <span className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-4 block">
-              # FAQ
-            </span>
-            <h2 className="text-3xl font-mono font-bold text-foreground cyber-text">
-              Common Questions
-            </h2>
           </motion.div>
-          <div className="flex flex-col gap-4">
-            {faqs.map((faq) => (
-              <motion.div
-                key={faq.q}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                whileHover={{ x: 4 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                className="glass-card rounded-sm p-6"
-              >
-                <h4 className="font-mono text-sm font-semibold text-foreground mb-2">
-                  {faq.q}
-                </h4>
-                <p className="text-sm text-muted-foreground font-sans leading-relaxed">
-                  {faq.a}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            className="text-center text-xs text-muted-foreground/60 mt-10 font-mono"
           >
-            <h2 className="text-3xl font-mono font-bold text-foreground mb-4 cyber-text">
-              Not sure which plan?
-            </h2>
-            <p className="text-muted-foreground font-sans mb-8">
-              Tell us about your startup and we&apos;ll recommend the right
-              assessment.
-            </p>
-            <Button
-              onClick={() => navigate({ to: "/contact" })}
-              size="lg"
-              className="bg-primary text-primary-foreground font-mono tracking-wider hover:opacity-90 animate-pulse-glow"
-            >
-              Talk to Us
-            </Button>
-          </motion.div>
+            All prices in INR. Custom invoicing available. Contact us for
+            international clients.
+          </motion.p>
         </div>
       </section>
     </div>

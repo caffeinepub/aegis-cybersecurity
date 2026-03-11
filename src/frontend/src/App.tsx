@@ -1,13 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import {
-  Link,
-  Outlet,
-  RouterProvider,
-  createRootRoute,
-  createRoute,
-  createRouter,
-  useNavigate,
-} from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import About from "./pages/About";
@@ -16,66 +8,84 @@ import Home from "./pages/Home";
 import Pricing from "./pages/Pricing";
 import Services from "./pages/Services";
 
-// Re-export for use in other files
-export { Link, useNavigate };
+function getHashPath(): string {
+  try {
+    const hash = window.location.hash;
+    if (!hash || hash === "#" || hash === "#/") return "/";
+    const path = hash.startsWith("#") ? hash.slice(1) : hash;
+    return path || "/";
+  } catch {
+    return "/";
+  }
+}
 
-function RootLayout() {
+function navigate(to: string) {
+  window.location.hash = to;
+}
+
+export function Link({
+  to,
+  children,
+  className,
+  onClick,
+  "data-ocid": dataOcid,
+}: {
+  to: string;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+  "data-ocid"?: string;
+}) {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <a
+      href={`#${to}`}
+      className={className}
+      data-ocid={dataOcid}
+      onClick={onClick}
+    >
+      {children}
+    </a>
+  );
+}
+
+export function useNavigate() {
+  return (to: string) => navigate(to);
+}
+
+function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="bg-blobs min-h-screen bg-background flex flex-col relative">
+      <div className="blob-mid" aria-hidden="true" />
       <Navbar />
-      <main className="flex-1">
-        <Outlet />
-      </main>
+      <main className="flex-1 relative z-10">{children}</main>
       <Footer />
       <Toaster />
     </div>
   );
 }
 
-const rootRoute = createRootRoute({ component: RootLayout });
-
-const homeRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/",
-  component: Home,
-});
-const servicesRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/services",
-  component: Services,
-});
-const pricingRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/pricing",
-  component: Pricing,
-});
-const aboutRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/about",
-  component: About,
-});
-const contactRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/contact",
-  component: Contact,
-});
-
-const routeTree = rootRoute.addChildren([
-  homeRoute,
-  servicesRoute,
-  pricingRoute,
-  aboutRoute,
-  contactRoute,
-]);
-
-const router = createRouter({ routeTree });
-
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
-
 export default function App() {
-  return <RouterProvider router={router} />;
+  const [path, setPath] = useState(() => getHashPath());
+
+  useEffect(() => {
+    function handleHashChange() {
+      setPath(getHashPath());
+    }
+    window.addEventListener("hashchange", handleHashChange);
+    // Handle direct link with no hash — redirect to home
+    if (!window.location.hash) {
+      window.location.hash = "/";
+    }
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  let page: React.ReactNode;
+  if (path === "/" || path === "") page = <Home />;
+  else if (path === "/services") page = <Services />;
+  else if (path === "/pricing") page = <Pricing />;
+  else if (path === "/about") page = <About />;
+  else if (path === "/contact") page = <Contact />;
+  else page = <Home />;
+
+  return <RootLayout>{page}</RootLayout>;
 }

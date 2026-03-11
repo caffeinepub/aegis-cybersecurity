@@ -73,16 +73,21 @@ async function createAuthClient(
   createOptions?: AuthClientCreateOptions,
 ): Promise<AuthClient> {
   const config = await loadConfig();
+
+  // Only include loginOptions.derivationOrigin when it is a non-empty string.
+  // Passing undefined to @dfinity/auth-client causes it to call .replace() on
+  // the value internally, which throws "Cannot read properties of undefined".
+  const loginOptions = config.ii_derivation_origin
+    ? { derivationOrigin: config.ii_derivation_origin }
+    : undefined;
+
   const options: AuthClientCreateOptions = {
     idleOptions: {
-      // Default behaviour of this hook is not to logout and reload window on identity expiration
       disableDefaultIdleCallback: true,
       disableIdle: true,
       ...createOptions?.idleOptions,
     },
-    loginOptions: {
-      derivationOrigin: config.ii_derivation_origin,
-    },
+    ...(loginOptions ? { loginOptions } : {}),
     ...createOptions,
   };
   const authClient = await AuthClient.create(options);
