@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { createActorWithConfig } from "../config";
 import { useActor } from "./useActor";
 
 export function useSubmitContactForm() {
@@ -11,8 +12,9 @@ export function useSubmitContactForm() {
       email: string;
       message: string;
     }) => {
-      if (!actor) throw new Error("Not connected");
-      await actor.submitContactForm(
+      // Use cached actor if available, otherwise create a fresh anonymous one
+      const resolvedActor = actor ?? (await createActorWithConfig());
+      await resolvedActor.submitContactForm(
         data.name,
         data.startupName,
         data.websiteUrl,

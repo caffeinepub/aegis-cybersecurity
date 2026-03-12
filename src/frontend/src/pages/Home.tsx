@@ -88,7 +88,7 @@ const trustSignals = [
 const pricingTiers = [
   {
     name: "Starter Security Scan",
-    price: "₹15,000 / $220",
+    price: "$220",
     billing: "one-time",
     popular: false,
     features: [
@@ -101,7 +101,7 @@ const pricingTiers = [
   },
   {
     name: "Growth Security Pack",
-    price: "₹45,000 / $380",
+    price: "$380",
     billing: "one-time",
     popular: true,
     features: [
@@ -381,7 +381,6 @@ export default function Home() {
       <section className="relative min-h-[88vh] flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Text */}
             <motion.div
               variants={stagger}
               initial="hidden"
@@ -437,7 +436,6 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Terminal */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -627,7 +625,9 @@ export default function Home() {
                   </h3>
                   <div className="flex items-end gap-2">
                     <span
-                      className={`hero-headline text-3xl ${tier.popular ? "gradient-text" : "text-foreground"}`}
+                      className={`hero-headline text-3xl ${
+                        tier.popular ? "gradient-text" : "text-foreground"
+                      }`}
                     >
                       {tier.price}
                     </span>
@@ -731,7 +731,6 @@ export default function Home() {
             viewport={{ once: true }}
             className="glass-card neon-border rounded-xl overflow-hidden"
           >
-            {/* Report header */}
             <div className="px-6 py-4 bg-secondary/40 border-b border-border/40 font-mono text-xs">
               <div className="flex items-center gap-2 text-primary mb-1">
                 <FileText className="w-3.5 h-3.5" />
@@ -748,7 +747,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Findings */}
             <div className="p-6 space-y-4">
               <div className="font-mono text-xs text-muted-foreground mb-2 uppercase tracking-widest">
                 Findings Summary — 3 of 22 shown
@@ -794,7 +792,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA — enhanced */}
+      {/* CTA */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <motion.div

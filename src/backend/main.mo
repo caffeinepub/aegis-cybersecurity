@@ -1,6 +1,5 @@
 import Time "mo:core/Time";
 import Map "mo:core/Map";
-import Iter "mo:core/Iter";
 import Array "mo:core/Array";
 
 actor {
@@ -15,10 +14,9 @@ actor {
   };
 
   let contacts = Map.empty<Nat, Contact>();
-  var nextId = 0;
+  var nextId : Nat = 0;
 
-  public shared ({ caller }) func submitContactForm(name : Text, startupName : Text, websiteUrl : Text, email : Text, message : Text) : async () {
-    let timestamp = Time.now();
+  public shared func submitContactForm(name : Text, startupName : Text, websiteUrl : Text, email : Text, message : Text) : async () {
     let contact : Contact = {
       id = nextId;
       name;
@@ -26,13 +24,13 @@ actor {
       websiteUrl;
       email;
       message;
-      timestamp;
+      timestamp = Time.now();
     };
     contacts.add(nextId, contact);
     nextId += 1;
   };
 
-  public query ({ caller }) func getAllContacts() : async [Contact] {
-    contacts.values().toArray();
+  public query func getAllContacts() : async [Contact] {
+    Array.fromIter(contacts.values())
   };
 };
