@@ -88,7 +88,7 @@ const trustSignals = [
 const pricingTiers = [
   {
     name: "Starter Security Scan",
-    price: "₹15,000",
+    price: "₹15,000 / $220",
     billing: "one-time",
     popular: false,
     features: [
@@ -101,7 +101,7 @@ const pricingTiers = [
   },
   {
     name: "Growth Security Pack",
-    price: "₹45,000",
+    price: "₹45,000 / $380",
     billing: "one-time",
     popular: true,
     features: [

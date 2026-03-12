@@ -18,9 +18,9 @@ const founders = [
   },
   {
     name: "Akshar Anant",
-    role: "CFO",
+    role: "CMO",
     icon: TrendingUp,
-    desc: "Akshar manages the financial health and planning of AEGIS-IND. His focus on transparent, fair pricing ensures that startup-quality security doesn't come with enterprise-level costs.",
+    desc: "Akshar leads the marketing strategy and brand growth of AEGIS-IND. As Chief Marketing Officer, he drives awareness and positions AEGIS-IND as the go-to cybersecurity partner for startups.",
     color: "text-primary",
   },
   {

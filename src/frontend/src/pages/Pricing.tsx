@@ -5,7 +5,7 @@ import { Link } from "../App";
 const tiers = [
   {
     name: "Starter Security Scan",
-    price: "\u20b915,000",
+    price: "\u20b915,000 / $220",
     period: "one-time",
     desc: "Perfect for early-stage startups doing their first security assessment.",
     features: [
@@ -21,7 +21,7 @@ const tiers = [
   },
   {
     name: "Growth Security Pack",
-    price: "\u20b945,000",
+    price: "\u20b945,000 / $380",
     period: "one-time",
     desc: "Comprehensive security for growing startups with more complex infrastructure.",
     features: [

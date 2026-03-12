@@ -29,11 +29,11 @@ export default function Footer() {
               startups.
             </p>
             <a
-              href="mailto:sushantbhardwaj2121@gmail.com"
+              href="mailto:aegisind.support@gmail.com"
               className="text-xs text-primary/70 hover:text-primary transition-colors font-mono"
               data-ocid="footer.email.link"
             >
-              sushantbhardwaj2121@gmail.com
+              aegisind.support@gmail.com
             </a>
           </div>
           <nav className="flex flex-wrap gap-x-6 gap-y-2">

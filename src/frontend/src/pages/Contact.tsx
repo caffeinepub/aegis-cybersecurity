@@ -20,8 +20,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "sushantbhardwaj2121@gmail.com",
-    href: "mailto:sushantbhardwaj2121@gmail.com",
+    value: "aegisind.support@gmail.com",
+    href: "mailto:aegisind.support@gmail.com",
   },
   {
     icon: MapPin,
@@ -70,14 +70,14 @@ export default function Contact() {
         >
           <CheckCircle className="w-14 h-14 text-primary mx-auto mb-6 animate-float" />
           <h2 className="hero-headline text-2xl text-foreground mb-4">
-            Message Sent!
+            Request Received!
           </h2>
           <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
-            Thanks for reaching out. We&apos;ll review your request and get back
-            to you within 24 hours.
+            Thank you. Our security team will review your request and respond
+            shortly.
           </p>
           <div className="font-mono text-xs text-muted-foreground bg-secondary/30 rounded-md px-4 py-2">
-            sushantbhardwaj2121@gmail.com
+            aegisind.support@gmail.com
           </div>
         </motion.div>
       </div>
@@ -86,7 +86,6 @@ export default function Contact() {
 
   return (
     <div className="pt-16">
-      {/* Header */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
@@ -103,7 +102,7 @@ export default function Contact() {
               Request a Security Scan
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Tell us about your startup and we&apos;ll get back to you within
+              Tell us about your company and we&apos;ll get back to you within
               24 hours.
             </p>
           </motion.div>
@@ -125,8 +124,8 @@ export default function Contact() {
                   Get in Touch
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Fill out the form and our team will review your startup&apos;s
-                  profile to recommend the right assessment.
+                  Fill out the form and our team will review your profile to
+                  recommend the right assessment.
                 </p>
               </div>
 
@@ -204,7 +203,7 @@ export default function Contact() {
                       htmlFor="startupName"
                       className="font-mono text-xs tracking-widest uppercase text-muted-foreground"
                     >
-                      Startup Name *
+                      Company *
                     </Label>
                     <Input
                       id="startupName"
@@ -212,7 +211,7 @@ export default function Contact() {
                       value={form.startupName}
                       onChange={handleChange}
                       required
-                      placeholder="Acme Inc."
+                      placeholder="Your company name"
                       data-ocid="contact.startup_name.input"
                       className="bg-secondary/20 border-border/40 focus:border-primary/50"
                     />
@@ -233,7 +232,7 @@ export default function Contact() {
                       value={form.websiteUrl}
                       onChange={handleChange}
                       required
-                      placeholder="https://acme.io"
+                      placeholder="https://yourcompany.io"
                       data-ocid="contact.website_url.input"
                       className="bg-secondary/20 border-border/40 focus:border-primary/50"
                     />
@@ -252,7 +251,7 @@ export default function Contact() {
                       value={form.email}
                       onChange={handleChange}
                       required
-                      placeholder="you@acme.io"
+                      placeholder="you@yourcompany.io"
                       data-ocid="contact.email.input"
                       className="bg-secondary/20 border-border/40 focus:border-primary/50"
                     />
@@ -264,14 +263,15 @@ export default function Contact() {
                     htmlFor="message"
                     className="font-mono text-xs tracking-widest uppercase text-muted-foreground"
                   >
-                    Message
+                    Message *
                   </Label>
                   <Textarea
                     id="message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    placeholder="Tell us about your startup, tech stack, and any specific security concerns..."
+                    required
+                    placeholder="Tell us about your company, tech stack, and any specific security concerns..."
                     rows={5}
                     data-ocid="contact.message.textarea"
                     className="bg-secondary/20 border-border/40 focus:border-primary/50 resize-none"
@@ -286,7 +286,7 @@ export default function Contact() {
                     <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
                     <p className="text-sm text-destructive">
                       Failed to send message. Please try again or email us
-                      directly at sushantbhardwaj2121@gmail.com
+                      directly at aegisind.support@gmail.com
                     </p>
                   </div>
                 )}
@@ -308,7 +308,7 @@ export default function Contact() {
                   ) : (
                     <>
                       <Mail className="w-4 h-4 mr-2" />
-                      Send Message
+                      Request Security Scan
                     </>
                   )}
                 </Button>
