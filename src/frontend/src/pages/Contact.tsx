@@ -14,7 +14,15 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
-import { useSubmitContactForm } from "../hooks/useQueries";
+
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzdjvzeq";
+
+const SERVICES = [
+  { value: "", label: "Select a service..." },
+  { value: "Starter Scan", label: "Starter Scan" },
+  { value: "Startup Assessment", label: "Startup Assessment" },
+  { value: "Full Audit", label: "Full Audit" },
+];
 
 const contactInfo = [
   {
@@ -37,6 +45,21 @@ const contactInfo = [
   },
 ];
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function isValidWebsite(url: string): boolean {
+  try {
+    const u = new URL(
+      url.trim().startsWith("http") ? url.trim() : `https://${url.trim()}`,
+    );
+    return u.hostname.includes(".");
+  } catch {
+    return false;
+  }
+}
+
 export default function Contact() {
   const [form, setForm] = useState({
     name: "",
@@ -44,22 +67,86 @@ export default function Contact() {
     websiteUrl: "",
     email: "",
     message: "",
+    service: "",
   });
-
-  const mutation = useSubmitContactForm();
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value ?? "" }));
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function validate(): boolean {
+    const errors: Record<string, string> = {};
+    if (!(form.name ?? "").trim()) errors.name = "Name is required.";
+    if (!(form.startupName ?? "").trim())
+      errors.startupName = "Company name is required.";
+    if (!(form.websiteUrl ?? "").trim()) {
+      errors.websiteUrl = "Website URL is required.";
+    } else if (!isValidWebsite(form.websiteUrl)) {
+      errors.websiteUrl =
+        "Enter a valid website URL (e.g. https://yoursite.com).";
+    }
+    if (!(form.email ?? "").trim()) {
+      errors.email = "Email is required.";
+    } else if (!isValidEmail(form.email)) {
+      errors.email = "Enter a valid email address.";
+    }
+    if (!(form.message ?? "").trim()) errors.message = "Message is required.";
+    if (!(form.service ?? "")) errors.service = "Please select a service.";
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate(form);
+    if (!validate()) return;
+    setStatus("submitting");
+    try {
+      const websiteNormalized = (form.websiteUrl ?? "")
+        .trim()
+        .startsWith("http")
+        ? form.websiteUrl.trim()
+        : `https://${form.websiteUrl.trim()}`;
+
+      const payload = new FormData();
+      payload.append("name", (form.name ?? "").trim());
+      payload.append("startupName", (form.startupName ?? "").trim());
+      payload.append("websiteUrl", websiteNormalized);
+      payload.append("email", (form.email ?? "").trim());
+      payload.append("message", (form.message ?? "").trim());
+      payload.append("service", form.service ?? "");
+      payload.append("_subject", "New AEGIS Security Scan Request");
+      payload.append("_replyto", (form.email ?? "").trim());
+      payload.append("_captcha", "false");
+
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body: payload,
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   }
 
-  if (mutation.isSuccess) {
+  if (status === "success") {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center px-4">
         <motion.div
@@ -73,8 +160,8 @@ export default function Contact() {
             Request Received!
           </h2>
           <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
-            Thank you. Our security team will review your request and respond
-            shortly.
+            Thank you. Your security scan request has been received. Our team
+            will contact you shortly.
           </p>
           <div className="font-mono text-xs text-muted-foreground bg-secondary/30 rounded-md px-4 py-2">
             aegisind.support@gmail.com
@@ -177,6 +264,7 @@ export default function Contact() {
             >
               <form
                 onSubmit={handleSubmit}
+                noValidate
                 className="glass-card rounded-xl p-8 flex flex-col gap-6"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -192,29 +280,37 @@ export default function Contact() {
                       name="name"
                       value={form.name}
                       onChange={handleChange}
-                      required
                       placeholder="Your full name"
                       data-ocid="contact.name.input"
-                      className="bg-secondary/20 border-border/40 focus:border-primary/50"
+                      className={`bg-secondary/20 border-border/40 focus:border-primary/50 ${fieldErrors.name ? "border-destructive" : ""}`}
                     />
+                    {fieldErrors.name && (
+                      <span className="text-xs text-destructive">
+                        {fieldErrors.name}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2">
                     <Label
                       htmlFor="startupName"
                       className="font-mono text-xs tracking-widest uppercase text-muted-foreground"
                     >
-                      Company *
+                      Startup / Company *
                     </Label>
                     <Input
                       id="startupName"
                       name="startupName"
                       value={form.startupName}
                       onChange={handleChange}
-                      required
                       placeholder="Your company name"
                       data-ocid="contact.startup_name.input"
-                      className="bg-secondary/20 border-border/40 focus:border-primary/50"
+                      className={`bg-secondary/20 border-border/40 focus:border-primary/50 ${fieldErrors.startupName ? "border-destructive" : ""}`}
                     />
+                    {fieldErrors.startupName && (
+                      <span className="text-xs text-destructive">
+                        {fieldErrors.startupName}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -231,18 +327,22 @@ export default function Contact() {
                       name="websiteUrl"
                       value={form.websiteUrl}
                       onChange={handleChange}
-                      required
                       placeholder="https://yourcompany.io"
                       data-ocid="contact.website_url.input"
-                      className="bg-secondary/20 border-border/40 focus:border-primary/50"
+                      className={`bg-secondary/20 border-border/40 focus:border-primary/50 ${fieldErrors.websiteUrl ? "border-destructive" : ""}`}
                     />
+                    {fieldErrors.websiteUrl && (
+                      <span className="text-xs text-destructive">
+                        {fieldErrors.websiteUrl}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2">
                     <Label
                       htmlFor="email"
                       className="font-mono text-xs tracking-widest uppercase text-muted-foreground"
                     >
-                      Email *
+                      Email Address *
                     </Label>
                     <Input
                       id="email"
@@ -250,12 +350,53 @@ export default function Contact() {
                       type="email"
                       value={form.email}
                       onChange={handleChange}
-                      required
                       placeholder="you@yourcompany.io"
                       data-ocid="contact.email.input"
-                      className="bg-secondary/20 border-border/40 focus:border-primary/50"
+                      className={`bg-secondary/20 border-border/40 focus:border-primary/50 ${fieldErrors.email ? "border-destructive" : ""}`}
                     />
+                    {fieldErrors.email && (
+                      <span className="text-xs text-destructive">
+                        {fieldErrors.email}
+                      </span>
+                    )}
                   </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label
+                    htmlFor="service"
+                    className="font-mono text-xs tracking-widest uppercase text-muted-foreground"
+                  >
+                    Selected Service *
+                  </Label>
+                  <select
+                    id="service"
+                    name="service"
+                    value={form.service}
+                    onChange={handleChange}
+                    data-ocid="contact.service.select"
+                    className={`w-full rounded-md px-3 py-2 text-sm bg-secondary/20 border focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground ${
+                      fieldErrors.service
+                        ? "border-destructive"
+                        : "border-border/40 focus:border-primary/50"
+                    }`}
+                  >
+                    {SERVICES.map((s) => (
+                      <option
+                        key={s.value}
+                        value={s.value}
+                        disabled={s.value === ""}
+                        className="bg-background text-foreground"
+                      >
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                  {fieldErrors.service && (
+                    <span className="text-xs text-destructive">
+                      {fieldErrors.service}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -270,23 +411,26 @@ export default function Contact() {
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    required
                     placeholder="Tell us about your company, tech stack, and any specific security concerns..."
                     rows={5}
                     data-ocid="contact.message.textarea"
-                    className="bg-secondary/20 border-border/40 focus:border-primary/50 resize-none"
+                    className={`bg-secondary/20 border-border/40 focus:border-primary/50 resize-none ${fieldErrors.message ? "border-destructive" : ""}`}
                   />
+                  {fieldErrors.message && (
+                    <span className="text-xs text-destructive">
+                      {fieldErrors.message}
+                    </span>
+                  )}
                 </div>
 
-                {mutation.isError && (
+                {status === "error" && (
                   <div
                     data-ocid="contact.error_state"
                     className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/30"
                   >
                     <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
                     <p className="text-sm text-destructive">
-                      Failed to send message. Please try again or email us
-                      directly at aegisind.support@gmail.com
+                      Submission failed. Please try again later.
                     </p>
                   </div>
                 )}
@@ -294,16 +438,16 @@ export default function Contact() {
                 <Button
                   type="submit"
                   data-ocid="contact.submit_button"
-                  disabled={mutation.isPending}
+                  disabled={status === "submitting"}
                   className="w-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 animate-pulse-glow py-6"
                 >
-                  {mutation.isPending ? (
+                  {status === "submitting" ? (
                     <>
                       <Loader2
                         data-ocid="contact.loading_state"
                         className="w-4 h-4 mr-2 animate-spin"
                       />
-                      Sending...
+                      Submitting your request...
                     </>
                   ) : (
                     <>
